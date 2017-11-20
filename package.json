@@ -1,6 +1,6 @@
 {
   "name": "moli-init",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "moli plugin for init",
   "main": "index.js",
   "bin": {
