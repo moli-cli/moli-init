@@ -5,7 +5,7 @@ var commands = argv._;
 var opts = {
   cmd: commands,
   argv: argv,
-  name: "uba"
+  name: "moli"
 };
 
 require("./").plugin(opts);
