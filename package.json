@@ -1,6 +1,6 @@
 {
   "name": "moli-init",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "moli plugin for init",
   "main": "index.js",
   "bin": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/moli-cli/moli-init#readme",
   "dependencies": {
-    "chalk": "^1.1.3",
+    "chalk": "^2.1.0",
     "cross-spawn": "^5.1.0",
     "download-git-repo": "^1.0.1",
     "inquirer": "^3.0.6",
