@@ -1,55 +1,25 @@
-const request = require('request');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const path = require('path');
-const pathExists = require('path-exists');
-const fs = require('fs');
-const download = require('download-git-repo');
-const spawn = require('cross-spawn');
+var request = require('request');
+var chalk = require('chalk');
+var inquirer = require('inquirer');
+var path = require('path');
+var pathExists = require('path-exists');
+var fs = require('fs');
+var download = require('download-git-repo');
+var spawn = require('cross-spawn');
+var log = require('../utils/moliLogUtil')
 
 function getHelp() {
-    console.log(chalk.green(" Usage : "));
-    console.log();
-    console.log(chalk.green(" moli init"));
-    console.log();
+    log.log(" Usage : ");
+    log.log("");
+    log.log(" moli init");
+    log.log("");
     process.exit(0);
 }
 
 function getVersion() {
-    console.log(chalk.green(require("../package.json").version));
+    log.log(require("../package.json").version);
     process.exit(0);
 }
-
-/**
- * 基本日志输出
- * @param msg
- */
-function $moliInitInfo(msg) {
-    if (chalk) {
-        console.log(chalk.hex('#541c0b')('[init-info] >>>>>> ' + msg));
-    } else {
-        console.log('[init-info] >>>>>> ' + msg);
-    }
-}
-
-/**
- * 错误日志输出
- * @param msg
- */
-function $moliInitErr(msg) {
-    if (chalk) {
-        console.log(chalk.hex('#ff0000')('[init-error] >>>>>> ' + msg));
-    } else {
-        console.log('[init-error] >>>>>> ' + msg);
-    }
-}
-
-/**
- * 下载时的延迟输出
- */
-var sysOutDelay = function () {
-    process.stdout.write(".");
-};
 
 /**
  * 创建用户项目信息
@@ -138,7 +108,7 @@ function createMobileAppConfig(projectPath) {
  */
 function init() {
     // 获取可以创建的模板列表
-    $moliInitInfo("Available official moli porject templates:");
+    log.info("Available official moli porject templates:");
     var repoNameData = [];
     request({
         url: 'https://api.github.com/users/yymoli/repos',
@@ -184,9 +154,11 @@ function init() {
                         console.log(chalk.red(`Directory ${name} Already Exists.`));
                         process.exit(0);
                     }
-                    $moliInitInfo(`Downloading ${template} please wait.`);
+                    log.info(`Downloading ${template} please wait.`);
                     var downloadStartTime = new Date().getTime();
-                    var downloadTimer = setInterval(sysOutDelay, 1000);
+                    var downloadTimer = setInterval(function () {
+                        log.logInLine(".", "#00bb00");
+                    }, 1000);
                     //TODO 开始下载
                     download(`yymoli/${template}`, `${name}`, function (err) {
                         if (!err) {
@@ -194,11 +166,11 @@ function init() {
                             clearInterval(downloadTimer);
                             var downloadUsedTime = (new Date().getTime() - downloadStartTime) / 1000;
                             console.log("");
-                            $moliInitInfo(`Download ${name} Done.Used Time：${downloadUsedTime}s`);
+                            log.info(`Download ${name} Done.Used Time：${downloadUsedTime}s`);
                             // 这里需要初始化配置文件和项目文件
-                            $moliInitInfo("Write Project Info To .project File!");
+                            log.info("Write Project Info To .project File!");
                             createProjectInfo(root);
-                            $moliInitInfo("Write Mobile App Config To mobileAppConfig.json File!");
+                            log.info("Write Mobile App Config To mobileAppConfig.json File!");
                             createMobileAppConfig(root);
                             inquirer.prompt([{
                                 type: 'confirm',
@@ -207,7 +179,7 @@ function init() {
                             }]).then(function (res) {
                                 var npmInstallChdir = path.resolve('.', name);
                                 if (res.ok) {
-                                    $moliInitInfo(`Install NPM dependent packages,please wait.`);
+                                    log.info(`Install NPM dependent packages,please wait.`);
                                     var npmInstallStartTime = new Date().getTime();
                                     //TODO 选择自动安装
                                     process.chdir(npmInstallChdir);
@@ -220,17 +192,17 @@ function init() {
                                     proc.on('close', function (code) {
                                         var npmInstallUsedTime = (new Date().getTime() - npmInstallStartTime) / 1000;
                                         if (code !== 0) {
-                                            console.error('`npm ' + args.join(' ') + '` failed');
+                                            log.error('`npm ' + args.join(' ') + '` failed');
                                             return;
                                         }
-                                        $moliInitInfo(`NPM package installed.Used Time：${npmInstallUsedTime}s`);
+                                        log.info(`NPM package installed.Used Time：${npmInstallUsedTime}s`);
                                     });
                                 } else {
-                                    $moliInitInfo(`\nCancel the installation of NPM dependent package.\nPlease run \'cd ${name} && npm install\' manually.`);
+                                    log.info(`\nCancel the installation of NPM dependent package.\nPlease run \'cd ${name} && npm install\' manually.`);
                                 }
                             });
                         } else {
-                            console.error(requestBody.message);
+                            log.error(requestBody.message);
                         }
                     });
                 });
