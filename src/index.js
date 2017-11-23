@@ -9,9 +9,18 @@ var spawn = require('cross-spawn');
 var log = require('../utils/moliLogUtil')
 
 function getHelp() {
-    log.log(" Usage : ");
+    log.log("  Usage : ");
     log.log("");
-    log.log(" moli init");
+    log.log("  moli init [options]");
+    log.log("");
+    log.log("  options:");
+    log.log("");
+    log.log("    -h, --help         init help");
+    log.log("    -v, --version      moli-init version");
+    log.log("");
+    log.log("  Examples:");
+    log.log("");
+    log.log("    $ moli init");
     log.log("");
     process.exit(0);
 }
@@ -223,4 +232,4 @@ module.exports = {
         //
         init();
     }
-}
+};
