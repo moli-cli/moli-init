@@ -103,7 +103,7 @@ function createMobileAppConfig(projectPath) {
     };
     // launchOptions设置
     mobileAppConfigObj.launchOptions = {
-        "autoHideLaunch": false,
+        "autoHideLaunch": true,
         "type": ""
     };
     // app默认设置
