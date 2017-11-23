@@ -110,7 +110,7 @@ function createMobileAppConfig(projectPath) {
     mobileAppConfigObj.statusBarStyle = "dark";
     mobileAppConfigObj.navigationBarHidden = true;
     mobileAppConfigObj.statusBarAppearance = true;
-    mobileAppConfigObj.fullScreen = true;
+    mobileAppConfigObj.fullScreen = false;
     mobileAppConfigObj.orientation = "portrait";
     mobileAppConfigObj.messageIntercept = "";
     // 将projectInfo写入config.json中
