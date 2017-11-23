@@ -1,5 +1,4 @@
 var request = require('request');
-var chalk = require('chalk');
 var inquirer = require('inquirer');
 var path = require('path');
 var pathExists = require('path-exists');
@@ -8,6 +7,9 @@ var download = require('download-git-repo');
 var spawn = require('cross-spawn');
 var log = require('../utils/moliLogUtil')
 
+/**
+ * 帮助信息
+ */
 function getHelp() {
     log.log("  Usage : ");
     log.log("");
@@ -25,6 +27,9 @@ function getHelp() {
     process.exit(0);
 }
 
+/**
+ * 版本信息
+ */
 function getVersion() {
     log.log(require("../package.json").version);
     process.exit(0);
@@ -125,14 +130,13 @@ function init() {
             'User-Agent': 'moli'
         }
     }, function (err, res, body) {
-        if (err) console.log(err);
+        if (err) {
+            log.error(err);
+            process.exit(1);
+        }
         var requestBody = JSON.parse(body);
         if (Array.isArray(requestBody)) {
             requestBody.forEach(function (repo, index) {
-                // console.log(
-                //     (index + 1) + ')' + '  ' + chalk.yellow('★') +
-                //     '  ' + chalk.blue(repo.name) +
-                //     ' - ' + repo.description);
                 if (repo.name.match("tpl-")) {
                     repoNameData.push(`${repo.name} - ${repo.description}`);
                 }
@@ -160,7 +164,7 @@ function init() {
                     if (!pathExists.sync(name)) {
                         fs.mkdirSync(root);
                     } else {
-                        console.log(chalk.red(`Directory ${name} Already Exists.`));
+                        log.error(`Directory ${name} Already Exists.`);
                         process.exit(0);
                     }
                     log.info(`Downloading ${template} please wait.`);
@@ -174,7 +178,7 @@ function init() {
                             // 完成下载
                             clearInterval(downloadTimer);
                             var downloadUsedTime = (new Date().getTime() - downloadStartTime) / 1000;
-                            console.log("");
+                            log.log("");
                             log.info(`Download ${name} Done.Used Time：${downloadUsedTime}s`);
                             // 这里需要初始化配置文件和项目文件
                             log.info("Write Project Info To .project File!");
@@ -229,7 +233,7 @@ module.exports = {
         if (options.argv.v || options.argv.version) {
             getVersion();
         }
-        //
+        // 操作初始化
         init();
     }
 };
