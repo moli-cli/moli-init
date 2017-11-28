@@ -141,45 +141,47 @@ function init() {
                     repoNameData.push(`${repo.name} - ${repo.description}`);
                 }
             });
-            //TODO 人机交互
-            inquirer.prompt([{
-                type: 'list',
-                name: 'selectRepo',
-                message: 'Please select :',
+            //人机交互，获取可以选择使用的模版
+            var questionTemplateName = [{
+                type: 'rawlist',
+                name: 'templateName',
+                message: 'Please enter the selected project template number:',
                 choices: repoNameData
-            }]).then(function (answers) {
-                var selectName = answers.selectRepo.split(' - ')[0];
-                var questions = [{
+            }];
+            inquirer.prompt(questionTemplateName).then(function (answers) {
+                // 获取选择的模版名称
+                var templateName = answers.templateName.split(' - ')[0];
+                var questionProjectName = [{
                     type: 'input',
-                    name: 'selectName',
-                    message: 'default project name :',
+                    name: 'projectName',
+                    message: 'Please enter your project name:',
                     default: function () {
-                        return 'moli-react-project-demo';
+                        return 'moli-demo';
                     }
                 }];
-                inquirer.prompt(questions).then(function (answers) {
-                    var name = answers.selectName,
-                        template = selectName;
-                    var root = path.resolve(name);
-                    if (!pathExists.sync(name)) {
+                inquirer.prompt(questionProjectName).then(function (answers) {
+                    var projectName = answers.projectName;
+                    var root = path.resolve(projectName);
+                    if (!pathExists.sync(projectName)) {
                         fs.mkdirSync(root);
                     } else {
-                        log.error(`Directory ${name} Already Exists.`);
+                        log.error(`Directory ${projectName} Already Exists.`);
                         process.exit(0);
                     }
-                    log.info(`Downloading ${template} please wait.`);
+                    log.info(`Downloading ${templateName} to ${projectName}. Please wait.`);
+                    log.logInLine("Downloading.","#0000ff");
                     var downloadStartTime = new Date().getTime();
                     var downloadTimer = setInterval(function () {
-                        log.logInLine(".", "#00bb00");
+                        log.logInLine(".","#0000ff");
                     }, 1000);
                     //TODO 开始下载
-                    download(`yymoli/${template}`, `${name}`, function (err) {
+                    download(`yymoli/${templateName}`, `${projectName}`, function (err) {
                         if (!err) {
                             // 完成下载
                             clearInterval(downloadTimer);
                             var downloadUsedTime = (new Date().getTime() - downloadStartTime) / 1000;
                             log.log("");
-                            log.info(`Download ${name} Done.Used Time：${downloadUsedTime}s`);
+                            log.info(`Download ${projectName} Done.Used Time：${downloadUsedTime}s`);
                             // 这里需要初始化配置文件和项目文件
                             log.info("Write Project Info To .project File!");
                             createProjectInfo(root);
@@ -190,7 +192,7 @@ function init() {
                                 message: 'Automatically install NPM dependent packages?',
                                 name: 'ok'
                             }]).then(function (res) {
-                                var npmInstallChdir = path.resolve('.', name);
+                                var npmInstallChdir = path.resolve('.', projectName);
                                 if (res.ok) {
                                     log.info(`Install NPM dependent packages,please wait.`);
                                     var npmInstallStartTime = new Date().getTime();
@@ -211,7 +213,7 @@ function init() {
                                         log.info(`NPM package installed.Used Time：${npmInstallUsedTime}s`);
                                     });
                                 } else {
-                                    log.info(`\nCancel the installation of NPM dependent package.\nPlease run \'cd ${name} && npm install\' manually.`);
+                                    log.info(`\nCancel the installation of NPM dependent package.\nPlease run \'cd ${projectName} && npm install\' manually.`);
                                 }
                             });
                         } else {
