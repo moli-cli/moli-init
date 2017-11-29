@@ -11,6 +11,8 @@ var log = require('../utils/moliLogUtil')
  * 帮助信息
  */
 function getHelp() {
+    log.success("moli init command help info");
+    log.log();
     log.log("  Usage : ");
     log.log("");
     log.log("  moli init [options]");
@@ -145,7 +147,7 @@ function init() {
             var questionTemplateName = [{
                 type: 'rawlist',
                 name: 'templateName',
-                message: 'Please enter the selected project template number:',
+                message: 'Please enter template number:',
                 choices: repoNameData
             }];
             inquirer.prompt(questionTemplateName).then(function (answers) {
@@ -169,10 +171,10 @@ function init() {
                         process.exit(0);
                     }
                     log.info(`Downloading ${templateName} to ${projectName}. Please wait.`);
-                    log.logInLine("Downloading.","#0000ff");
+                    log.logInLine("Downloading.");
                     var downloadStartTime = new Date().getTime();
                     var downloadTimer = setInterval(function () {
-                        log.logInLine(".","#0000ff");
+                        log.logInLine(".");
                     }, 1000);
                     //TODO 开始下载
                     download(`yymoli/${templateName}`, `${projectName}`, function (err) {
