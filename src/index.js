@@ -64,7 +64,7 @@ function createProjectInfo(projectPath) {
  */
 function createMobileAppConfig(projectPath) {
     var projectName = path.basename(projectPath);
-    var mobileAppConfigFile = path.join(projectPath, 'mobileAppConfig.json');
+    var mobileAppConfigFile = path.join(projectPath, 'app.config.json');
     var mobileAppConfigObj = {};
     // app构建设置
     mobileAppConfigObj.buildSetting = {
@@ -185,7 +185,7 @@ function init() {
                             // 这里需要初始化配置文件和项目文件
                             log.info("Write Project Info To .project File!");
                             createProjectInfo(root);
-                            log.info("Write Mobile App Config To mobileAppConfig.json File!");
+                            log.info("Write Mobile App Config To app.config.json File!");
                             createMobileAppConfig(root);
                             inquirer.prompt([{
                                 type: 'confirm',
